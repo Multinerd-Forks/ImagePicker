@@ -4,7 +4,7 @@ import Photos
 
 open class AssetManager {
 
-  open static func getImage(_ name: String) -> UIImage {
+  public static func getImage(_ name: String) -> UIImage {
     let traitCollection = UITraitCollection(displayScale: 3)
     var bundle = Bundle(for: AssetManager.self)
 
@@ -15,7 +15,7 @@ open class AssetManager {
     return UIImage(named: name, in: bundle, compatibleWith: traitCollection) ?? UIImage()
   }
 
-  open static func fetch(withConfiguration configuration: Configuration, _ completion: @escaping (_ assets: [PHAsset]) -> Void) {
+  public static func fetch(withConfiguration configuration: Configuration, _ completion: @escaping (_ assets: [PHAsset]) -> Void) {
     guard PHPhotoLibrary.authorizationStatus() == .authorized else { return }
 
     DispatchQueue.global(qos: .background).async {
@@ -36,7 +36,7 @@ open class AssetManager {
     }
   }
 
-  open static func resolveAsset(_ asset: PHAsset, size: CGSize = CGSize(width: 720, height: 1280), shouldPreferLowRes: Bool = false, completion: @escaping (_ image: UIImage?) -> Void) {
+  public static func resolveAsset(_ asset: PHAsset, size: CGSize = CGSize(width: 720, height: 1280), shouldPreferLowRes: Bool = false, completion: @escaping (_ image: UIImage?) -> Void) {
     let imageManager = PHImageManager.default()
     let requestOptions = PHImageRequestOptions()
     requestOptions.deliveryMode = shouldPreferLowRes ? .fastFormat : .highQualityFormat
@@ -51,7 +51,7 @@ open class AssetManager {
     }
   }
 
-  open static func resolveAssets(_ assets: [PHAsset], size: CGSize = CGSize(width: 720, height: 1280)) -> [UIImage] {
+  public static func resolveAssets(_ assets: [PHAsset], size: CGSize = CGSize(width: 720, height: 1280)) -> [UIImage] {
     let imageManager = PHImageManager.default()
     let requestOptions = PHImageRequestOptions()
     requestOptions.isSynchronous = true
@@ -67,7 +67,7 @@ open class AssetManager {
     return images
   }
 
-  open static func resolveAssets(_ assets: [PHAsset],imagesClosers: @escaping ([(imageData: Data, location: CLLocation?)])->()) {
+  public static func resolveAssets(_ assets: [PHAsset],imagesClosers: @escaping ([(imageData: Data, location: CLLocation?)])->()) {
     let imageManager = PHImageManager.default()
     let requestOptions = PHImageRequestOptions()
     requestOptions.isSynchronous = true
@@ -89,7 +89,7 @@ open class AssetManager {
             //Image without location and exif data (like screenshots)
             let targetSize = ImagePickerController.photoQuality == AVCaptureSession.Preset.photo ? PHImageManagerMaximumSize : CGSize(width: 720, height: 1280)
             imageManager.requestImage(for: asset, targetSize: targetSize, contentMode: .aspectFill, options: optionsRequest) { image, _ in
-              if let image = image, let data = UIImageJPEGRepresentation(image, 1.0) {
+              if let image = image, let data = image.jpegData(compressionQuality: 1.0) {
                 imagesData.append((data, asset.location))
                 if (imagesData.count == assets.count) {
                   imagesClosers(imagesData)
