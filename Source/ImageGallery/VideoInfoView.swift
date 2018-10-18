@@ -1,6 +1,6 @@
 import UIKit
 
-class VideoInfoView: UIView {
+public class VideoInfoView: UIView {
 
   var duration: TimeInterval? {
     didSet {
